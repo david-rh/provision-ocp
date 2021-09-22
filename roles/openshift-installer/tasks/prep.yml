@@ -1,0 +1,11 @@
+---
+- name: Check for existing kubeconfig
+  stat:
+    path: '{{ kubeconfig }}'
+  register: kubeconfig_file
+
+- name: Template install-config
+  template:
+    src: install-config.yaml.j2
+    dest: '{{ tmp_dir }}/install-config.yaml'
+  when: not kubeconfig_file.stat.exists

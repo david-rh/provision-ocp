@@ -1,0 +1,36 @@
+# Add keycloak client for OpenShift
+- apiVersion: keycloak.org/v1alpha1
+  kind: KeycloakClient
+  metadata:
+    name: openshift-client
+    namespace: {{ rhsso_project_name }}
+    labels:
+      app: {{ rhsso_app_label }}
+  spec:
+    realmSelector:
+      matchLabels:
+        app: {{ rhsso_app_label }}
+    client:
+      clientId: openshift
+      secret: openshift-secret
+      name: openshift
+      enabled: true
+      clientAuthenticatorType: client-secret
+      publicClient: false
+      standardFlowEnabled: true
+      redirectUris:
+        - 'https://console-openshift-console.apps.{{ subdomain }}/*'
+        - 'https://api.{{ subdomain }}/*'
+        - 'https://oauth-openshift.apps.{{ subdomain }}/*'
+      rootUrl: 'https://console-openshift-console.apps.{{ subdomain }}/'
+      protocol: openid-connect
+
+# Add Client ID and Secret to OpenShift Config
+- apiVersion: v1
+  kind: Secret
+  metadata:
+    name: keycloak-client-secret-openshift
+    namespace: openshift-config
+  type: Opaque
+  stringData:
+    clientSecret: openshift-secret

@@ -1,0 +1,5 @@
+---
+issuecerts: true
+
+certificate_path: '{{ tmp_dir }}/certs'
+

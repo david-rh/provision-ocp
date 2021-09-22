@@ -1,0 +1,4 @@
+tmp/**
+vars/common.yml
+vars/provision.yml
+vars/quickstart.yml

@@ -1,0 +1,13 @@
+---
+- name: Create Users
+  k8s:
+    kubeconfig: '{{ kubeconfig }}'
+    definition: '{{ lookup("template", "rhsso-users.yml.j2")|from_yaml }}'
+  loop: "{{ rhsso_users }}"
+
+#TODO: Add cluster role to admin users
+- name: TODO- Add cluster-admin to admin users
+  debug:
+    msg: "{{ item.username }}"
+  loop: "{{ rhsso_users }}"
+  when: item.admin | default(false) | bool

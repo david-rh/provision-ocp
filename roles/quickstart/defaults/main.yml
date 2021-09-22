@@ -1,0 +1,15 @@
+---
+deploy_ocs: false
+deploy_quay: false
+deploy_service_mesh: false
+deploy_gitea: false
+deploy_argocd: false
+deploy_sonarqube: false
+deploy_nexus: false
+deploy_3scale: false
+deploy_crw: false
+deploy_pipeline: false
+deploy_workshop: false
+deploy_bookinfo: false
+
+pipeline_style: tekton

@@ -1,0 +1,10 @@
+---
+- include_role:
+    name: 3scale
+  when: deploy_3scale
+- include_role:
+    name: service_mesh
+  when: deploy_service_mesh
+
+
+
