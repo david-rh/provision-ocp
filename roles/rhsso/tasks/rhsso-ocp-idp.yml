@@ -37,4 +37,15 @@
     kubeconfig: '{{ kubeconfig }}'
     definition: '{{ lookup("template", "rhsso-ocp-idp.yml.j2")|from_yaml }}'
 
+- name: Set ocp console logout redirect to sso logout endpoint
+  k8s: 
+    kubeconfig: '{{ kubeconfig }}'
+    state: present
+    api_version: config.openshift.io/v1
+    kind: Console
+    name: cluster
+    definition:
+      spec:
+        authentication:
+          logoutRedirect: 'https://keycloak-{{ rhsso_project_name }}.apps.{{ subdomain }}/auth/realms/{{ rhsso_realm_name }}/protocol/openid-connect/logout?redirect_uri=https%3A%2F%2Fconsole-openshift-console.apps.{{ subdomain }}'
 

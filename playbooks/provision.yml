@@ -39,8 +39,8 @@
     - include_role:
         name: openshift-installer
       when: install_openshift|default(true)
-    - include_role:
-        name: issuecerts
+#    - include_role:
+#        name: issuecerts
     - include_role:
         name: rhsso
 

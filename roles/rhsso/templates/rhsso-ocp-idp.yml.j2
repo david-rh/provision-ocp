@@ -14,23 +14,9 @@ spec:
       clientSecret:
         name: keycloak-client-secret-openshift
 {% if not trusted_router_certificates|bool %}
-      ca:
-        name: ca-config-map
 {% endif %}
-      extraScopes:
-      - email
-      - profile
+      ca:
+        name: kube-root-ca.crt
       extraAuthorizeParameters:
         include_granted_scopes: "true"
-      claims:
-        preferredUsername:
-        - preferred_username
-        - email
-        name:
-        - nickname
-        - given_name
-        - name
-        email:
-        - custom_email_claim
-        - email
       issuer: https://keycloak-{{ rhsso_project_name }}.apps.{{ subdomain }}/auth/realms/{{ rhsso_realm_name }}
