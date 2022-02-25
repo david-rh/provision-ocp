@@ -18,6 +18,9 @@
       clientAuthenticatorType: client-secret
       publicClient: false
       standardFlowEnabled: true
+      defaultClientScopes:
+        - profile
+        - email
       redirectUris:
         - 'https://console-openshift-console.apps.{{ subdomain }}/*'
         - 'https://api.{{ subdomain }}/*'

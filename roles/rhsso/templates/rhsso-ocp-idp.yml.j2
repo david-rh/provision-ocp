@@ -19,4 +19,13 @@ spec:
         name: kube-root-ca.crt
       extraAuthorizeParameters:
         include_granted_scopes: "true"
+      claims:
+        preferredUsername:
+        - preferred_username
+        - email
+        name:
+        - name
+        - given_name
+        email:
+        - email
       issuer: https://keycloak-{{ rhsso_project_name }}.apps.{{ subdomain }}/auth/realms/{{ rhsso_realm_name }}
