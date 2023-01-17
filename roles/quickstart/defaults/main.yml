@@ -1,4 +1,5 @@
 ---
+deploy_amqstreams: true
 deploy_ocs: false
 deploy_quay: false
 deploy_service_mesh: false

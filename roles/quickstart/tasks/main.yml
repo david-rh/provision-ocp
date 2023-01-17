@@ -1,5 +1,8 @@
 ---
 - include_role:
+    name: amqstreams
+  when: deploy_amqstreams
+- include_role:
     name: 3scale
   when: deploy_3scale
 - include_role:
