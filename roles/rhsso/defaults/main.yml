@@ -1,7 +1,7 @@
 ---
 rhsso_project_name: rhsso
 rhsso_project_display: Red Hat Single Sign-On Service
-rhsso_operator_version: rhsso-operator.7.5.1-opr-007
+rhsso_operator_version: rhsso-operator.7.6.3-opr-001
 rhsso_app_name: rhsso
 rhsso_app_label: rhsso
 rhsso_realm_name: openshift
