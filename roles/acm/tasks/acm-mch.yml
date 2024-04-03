@@ -1,0 +1,6 @@
+---
+- name: Create MultiClusterHub ACM Deployment
+  k8s:
+    kubeconfig: '{{ kubeconfig }}'
+    definition: '{{ lookup("template", "multiclusterhub.yml.j2")|from_yaml }}'
+

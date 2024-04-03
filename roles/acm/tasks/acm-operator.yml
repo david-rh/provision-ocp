@@ -1,0 +1,30 @@
+---
+- name: Ensure namespace exists
+  k8s:
+    kubeconfig: '{{ kubeconfig }}'
+    definition:
+      apiVersion: v1
+      kind: Namespace
+      metadata:
+        name: '{{ acm_project_name }}'
+        annotations:
+          openshift.io/display-name: '{{ acm_project_display }}'
+      spec: {}
+
+- name: Subscribe to RHACM Operator
+  k8s:
+    kubeconfig: '{{ kubeconfig }}'
+    definition: '{{ lookup("template", "acm-operator.yml.j2")|from_yaml }}'
+
+- name: Wait for RHACM Operator to finish being created
+  k8s_info:
+    kubeconfig: '{{ kubeconfig }}'
+    api_version: v1
+    kind: Pod
+    namespace: '{{ acm_project_name }}'
+    label_selectors:
+      - "name=multiclusterhub-operator"
+  register: acm_op_pod
+  until: acm_op_pod.resources|length > 0 and (acm_op_pod.resources|first).status.phase == "Running"
+  retries: 20
+  delay: 30

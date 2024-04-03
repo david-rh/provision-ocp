@@ -1,0 +1,23 @@
+# Operator Group for RH-ACM
+- apiVersion: operators.coreos.com/v1
+  kind: OperatorGroup
+  metadata:
+    name: open-cluster-management-canes
+    namespace: {{ acm_project_name }}
+  spec:
+    targetNamespaces:
+    - {{ acm_project_name }}
+    upgradeStrategy: Default
+
+# Operator Subscription for RH-ACM
+- apiVersion: operators.coreos.com/v1alpha1
+  kind: Subscription
+  metadata:
+    name: acm-operator-subscription
+    namespace: {{ acm_project_name }}
+  spec:
+    sourceNamespace: openshift-marketplace
+    source: redhat-operators
+    channel: release-2.10
+    installPlanApproval: Automatic
+    name: advanced-cluster-management
