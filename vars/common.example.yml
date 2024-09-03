@@ -43,10 +43,8 @@ tmp_dir: '{{ "/".join([ _tmp_parent, full_cluster_name ]) }}'
 #   in AWS, RHPDS clusters should use your user's kubeconfig after caching login
 #   credentials with oc.
 #   NOTE: Do not use ~ or other shell-expandable variables
-# kubeconfig: '{{ ansible_env["HOME"] }}/.kube/config'
-#   NOTE: IF YOU ARE USING run-container.sh:
-# *** DO NOT CHANGE THIS - IT WILL BE PUT HERE BY THE RUN SCRIPT ***
-kubeconfig: '{{ tmp_dir }}/auth/kubeconfig'
+kubeconfig: '{{ ansible_env["HOME"] }}/.kube/config'
+
 
 # The path to your 'oc' client - the provisioner puts it in {{ tmp_dir }},
 #   for RHPDS clusters, or those being used with the container workflow, you
@@ -62,13 +60,11 @@ oc_cli: '{{ tmp_dir }}/oc'
 #   understand them, but they aren't necessary to minimally deploy.
 ################################################################################
 
-
+# Create a randomized password to use during post install
 generated_password: "{{ lookup('password', '../tmp/rhssopasswd.txt length=15 chars=ascii_letters') }}"
 
-redhat_gov_catalog_tag: "1.3.0"
-
 ################################################################################
-#
+# Predefine user list
 # User attributes
 # - username:
 #   firstName:
@@ -90,7 +86,7 @@ manual_users:
   - username: openshift-admin
     firstName: OpenShift
     lastName: Administrator
-    password: RedHatAdmin1
+    password: {{ generated_password }}
     email: realmadmin@example.com
     admin: yes
     realmRoles:
@@ -113,16 +109,6 @@ manual_users:
       realm-management:
         - "manage-users"
 
-# A specially designated user for administering workshop content
-workshop_admin:
-  username: workshop-admin
-  firstName: workshop-admin
-  lastName: Workshop Admin
-  password: RedHatAdmin1
-  email: workshop@example.com
-  jenkinsRole: admin
-  admin: yes
-
 # The number of users created, as a string
 number_of_users: "2"
 
@@ -132,7 +118,7 @@ sequence_users: |
     - username: {{ username }}
       firstName: {{ username }}
       lastName: Workshop user
-      password: "{{ generated_password }}"
+      password: "{{ username }}pwd"
       email: {{ username }}@example.com
       jenkinsRole: edit
       nexusRole: nx-admin
@@ -142,12 +128,6 @@ sequence_users: |
 openshift_users: '{{ manual_users + [workshop_admin] + sequence_users|from_yaml }}'
 # The users to create workshop projects/integrations for
 workshop_users: '{{ [workshop_admin] + sequence_users|from_yaml }}'
-
-# Set common variables for RH-SSO setup and client integration
-rhsso_users: '{{ openshift_users }}'
-rhsso_realm_name: openshift
-rhsso_project_name: rhsso
-rhsso_app_label: rhsso
 
 # The type of worker to provision (including MachineSet adjustments)
 cluster_worker_machine_type: m4.2xlarge

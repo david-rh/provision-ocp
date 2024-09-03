@@ -1,0 +1,35 @@
+#
+- apiVersion: k8s.keycloak.org/v2alpha1
+  kind: KeycloakRealmImport
+  metadata:
+    name: {{ rhbk_realm_name }}
+    namespace: {{ rhbk_project_name }}
+    labels:
+      app: {{ rhbk_app_label }}
+  spec:
+    keycloakCRName: {{ rhbk_app_name }}
+    realm:
+      realm: {{ rhbk_realm_name }}
+      enabled: true
+      displayName: {{ rhbk_realm_display }}
+      clients:
+        - clientId: openshift
+          enabled: true
+          secret: {{ generated_password }}
+          redirectUris:
+            - 'https://oauth-openshift.apps.{{ subdomain }}/*'
+            - 'https://api.{{ subdomain }}/*'
+            - 'https://console-openshift-console.apps.{{ subdomain }}/*'
+          rootUrl: 'https://console-openshift-console.apps{{ subdomain }}'
+      users:
+{% for item in rhbk_users %}
+        - credentials:
+          - temporary: true
+            value: {{ item.password }}
+          email: {{ item.email }}
+          enabled: true
+          firstName: {{ item.firstName }}
+          lastName: {{ item.lastName }}
+          username: {{ item.username }}
+{% endfor %}
+    

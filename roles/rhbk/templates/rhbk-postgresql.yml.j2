@@ -1,0 +1,119 @@
+# Create the PostgreSQL DB secret
+- apiVersion: v1
+  kind: Secret
+  metadata:
+    name: {{ pgsql_secret_name }}
+    namespace: {{ rhbk_project_name }}
+  stringData:
+    POSTGRES_DATABASE: "{{ pgsql_database }}"
+    POSTGRES_PASSWORD: "{{ pgsql_password }}"
+    POSTGRES_USERNAME: "{{ pgsql_user }}"
+
+# Create the PostgreSQL DB Service
+- apiVersion: v1
+  kind: Service
+  metadata:
+    name: {{ pgsql_service_name }}
+    namespace: {{ rhbk_project_name }}
+  spec:
+    ports:
+    - name: postgresql
+      nodePort: 0
+      port: 5432
+      protocol: TCP
+      targetPort: 5432
+    selector:
+      app: {{ pgsql_service_name }}
+    sessionAffinity: None
+    type: ClusterIP
+
+# Create the PostgreSQL DB PVC
+- apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    name: rhbk-pgsql-claim
+    namespace: {{ rhbk_project_name }}
+  spec:
+    accessModes:
+    - ReadWriteOnce
+    resources:
+      requests:
+        storage: {{ pgsql_volume_size }}
+
+# Create the PostgreSQL DB Deployment
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    name: {{ pgsql_service_name }}
+    namespace: {{ rhbk_project_name }}
+  spec:
+    replicas: 1
+    selector:
+      matchLabels:
+        app: {{ pgsql_service_name }}
+        component: database
+    template:
+      metadata:
+        labels:
+          app: {{ pgsql_service_name }}
+          component: database
+      spec:
+        volumes:
+          - name: rhbk-pgsql-claim
+            persistentVolumeClaim:
+              claimName: rhbk-pgsql-claim
+        containers:
+          - resources: {}
+            readinessProbe:
+              exec:
+                command:
+                  - /bin/sh
+                  - '-c'
+                  - psql -h 127.0.0.1 -U $POSTGRESQL_USER -q -d $POSTGRESQL_DATABASE -c 'SELECT 1'
+              initialDelaySeconds: 5
+              timeoutSeconds: 1
+              periodSeconds: 10
+              successThreshold: 1
+              failureThreshold: 3
+            terminationMessagePath: /dev/termination-log
+            name: keycloak-postgresql
+            livenessProbe:
+              tcpSocket:
+                port: 5432
+              initialDelaySeconds: 30
+              timeoutSeconds: 1
+              periodSeconds: 10
+              successThreshold: 1
+              failureThreshold: 3
+            env:
+              - name: POSTGRESQL_USER
+                valueFrom:
+                  secretKeyRef:
+                    name: {{ pgsql_secret_name }}
+                    key: POSTGRES_USERNAME
+              - name: POSTGRESQL_PASSWORD
+                valueFrom:
+                  secretKeyRef:
+                    name: {{ pgsql_secret_name }}
+                    key: POSTGRES_PASSWORD
+              - name: POSTGRESQL_DATABASE
+                valueFrom:
+                  secretKeyRef:
+                    key: POSTGRES_DATABASE
+                    name: {{ pgsql_secret_name }}
+            ports:
+              - containerPort: 5432
+                protocol: TCP
+            imagePullPolicy: IfNotPresent
+            volumeMounts:
+              - name: rhbk-pgsql-claim
+                mountPath: /var/lib/pgsql/data
+            terminationMessagePolicy: File
+            image: 'rhel9/postgresql-16:latest'
+        restartPolicy: Always
+        terminationGracePeriodSeconds: 30
+        dnsPolicy: ClusterFirst
+    strategy:
+      type: Recreate
+
+

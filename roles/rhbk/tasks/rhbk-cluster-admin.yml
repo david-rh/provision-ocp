@@ -1,0 +1,7 @@
+---
+#TODO: Add cluster role to admin users
+- name: TODO- Add cluster-admin to admin users
+  debug:
+    msg: "{{ item.username }}"
+  loop: "{{ rhbk_users }}"
+  when: item.admin | default(false) | bool

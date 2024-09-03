@@ -22,20 +22,16 @@
   - not trusted_router_certificates|bool
   - configmap_present.resources|length < 1
 
-- name: Create Realm
-  k8s:
-    kubeconfig: '{{ kubeconfig }}'
-    definition: '{{ lookup("template", "rhsso-ocp-realm.yml.j2")|from_yaml }}'
+- name: Create client secret for openshift realm
+  ansible.builtin.command: oc create secret generic {{ rhbk_project_name}}-client-secret
+    --from-literal=clientSecret={{ generated_password }}
+    -n openshift-config
+  ignore_errors: true
 
-- name: Create OCP SSO Client
+- name: Create RH Keycloak IdP in OpenShift
   k8s:
     kubeconfig: '{{ kubeconfig }}'
-    definition: '{{ lookup("template", "rhsso-ocp-client.yml.j2")|from_yaml }}'
-
-- name: Create RH-SSO IdP in OpenShift
-  k8s:
-    kubeconfig: '{{ kubeconfig }}'
-    definition: '{{ lookup("template", "rhsso-ocp-idp.yml.j2")|from_yaml }}'
+    definition: '{{ lookup("template", "rhbk-ocp-idp.yml.j2")|from_yaml }}'
 
 - name: Set ocp console logout redirect to sso logout endpoint
   k8s: 
@@ -47,5 +43,5 @@
     definition:
       spec:
         authentication:
-          logoutRedirect: 'https://keycloak-{{ rhsso_project_name }}.apps.{{ subdomain }}/auth/realms/{{ rhsso_realm_name }}/protocol/openid-connect/logout?post_logout_redirect_uri=https%3A%2F%2Fconsole-openshift-console.apps.{{ subdomain }}&client_id=openshift'
+          logoutRedirect: 'https://{{ rhbk_hostname }}/auth/realms/{{ rhbk_realm_name }}/protocol/openid-connect/logout?post_logout_redirect_uri=https%3A%2F%2Fconsole-openshift-console.apps.{{ subdomain }}&client_id=openshift'
 

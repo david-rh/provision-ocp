@@ -1,0 +1,19 @@
+---
+- name: Ensure namespace exists
+  k8s:
+    kubeconfig: '{{ kubeconfig }}'
+    definition:
+      apiVersion: v1
+      kind: Namespace
+      metadata:
+        name: '{{ rhbk_project_name }}'
+        annotations:
+          openshift.io/display-name: '{{ rhbk_project_display }}'
+      spec: {}
+
+- name: Create PostgreSQL Deployment
+  k8s:
+    kubeconfig: '{{ kubeconfig }}'
+    definition: '{{ lookup("template", "rhbk-postgresql.yml.j2")|from_yaml }}'
+
+

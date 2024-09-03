@@ -1,0 +1,50 @@
+---
+# Create TLS Cert for Keycloak
+
+- name: Create tmp/ssl directory
+  ansible.builtin.file:
+    path: "../tmp/ssl"
+    state: directory
+    mode: '0755'
+
+- name: Create the private key
+  community.crypto.openssl_privatekey:
+    path: ../tmp/ssl/{{ rhbk_project_name }}.key
+    type: RSA
+    size: 4096
+
+- name: Create csr for self-signed certificate
+  community.crypto.openssl_csr_pipe:
+    privatekey_path: ../tmp/ssl/{{ rhbk_project_name }}.key
+    common_name: "{{ rhbk_hostname }}"
+  register: csr
+    
+- name: Create self-signed certificate
+  community.crypto.x509_certificate:
+    path: ../tmp/ssl/{{ rhbk_project_name }}.crt
+    privatekey_path: ../tmp/ssl/{{ rhbk_project_name }}.key
+    csr_content: "{{ csr.csr }}"
+    provider: selfsigned
+
+- name: Create secret using self-signed certificate
+  ansible.builtin.command: oc create secret tls {{ rhbk_project_name }}-tls-secret
+    --cert ../tmp/ssl/{{ rhbk_project_name }}.crt --key ../tmp/ssl/{{ rhbk_project_name }}.key
+    -n "{{ rhbk_project_name }}"
+  ignore_errors: true
+
+- name: Create config map ca trust store for OCP IDP
+  ansible.builtin.command: oc create configmap {{ rhbk_project_name }}-tls-trust
+    --from-file=ca.crt=../tmp/ssl/{{ rhbk_project_name }}.crt
+    -n "openshift-config"
+  ignore_errors: true
+    
+    
+
+
+
+
+
+
+
+
+

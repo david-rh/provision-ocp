@@ -1,0 +1,24 @@
+# RH-SSO Deployment
+- apiVersion: k8s.keycloak.org/v2alpha1
+  kind: Keycloak
+  metadata:
+    name: {{ rhbk_app_name }}
+    namespace: {{ rhbk_project_name }}
+    labels:
+      app: {{ rhbk_app_label }}
+  spec:
+    db:
+      vendor: postgres
+      url: jdbc:postgresql://{{ pgsql_service_name }}.{{ rhbk_project_name }}.svc.cluster.local:5432/{{ pgsql_database }}
+      passwordSecret:
+        key: POSTGRES_PASSWORD
+        name: pgsql-secret
+      usernameSecret:
+        key: POSTGRES_USERNAME
+        name: pgsql-secret
+    hostname:
+      hostname: {{ rhbk_hostname }}
+    http:
+      tlsSecret: {{ rhbk_project_name }}-tls-secret
+    instances: 1
+

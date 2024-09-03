@@ -1,0 +1,19 @@
+---
+rhbk_project_name: rhbk
+rhbk_project_display: Red Hat Single Sign-On Service
+rhbk_operator_version: rhbk-operator.v24.0.6-opr.1
+rhbk_app_name: rhbk
+rhbk_app_label: rhbk
+rhbk_realm_name: openshift
+rhbk_realm_display: OpenShift Realm
+subdomain: "{{ full_cluster_name }}"
+rhbk_hostname: "rhbk.apps.{{ subdomain }}"
+pgsql_secret_name: pgsql-secret
+pgsql_service_name: pgsql-kc-db
+pgsql_database: keycloak
+pgsql_password: "{{ generated_password }}"
+pgsql_user: rhbk
+pgsql_volume_size: 20Mi
+rhbk_users: "{{ openshift_users }}"
+
+

@@ -1,0 +1,31 @@
+- apiVersion: config.openshift.io/v1
+  kind: OAuth
+  metadata:
+    name: cluster
+  spec:
+    identityProviders:
+    - name: rhbk-idp
+      challenge: true
+      login: true
+      mappingMethod: claim
+      type: OpenID
+      openID:
+        clientID: "openshift"
+        clientSecret:
+          name: {{ rhbk_project_name}}-client-secret
+{% if not trusted_router_certificates|bool %}
+{% endif %}
+        ca:
+          name: {{ rhbk_project_name }}-tls-trust
+        extraAuthorizeParameters:
+          include_granted_scopes: "true"
+        claims:
+          preferredUsername:
+          - preferred_username
+          - email
+          name:
+          - name
+          - given_name
+          email:
+          - email
+        issuer: https://{{ rhbk_hostname }}/realms/{{ rhbk_realm_name }}
