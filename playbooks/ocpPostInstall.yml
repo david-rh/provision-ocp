@@ -12,7 +12,8 @@
   tasks:
     - include_role:
         name: rhbk
-#    - include_role:
-#        name: acm
+    - include_role:
+        name: acm
+      when: includeACM
 
       

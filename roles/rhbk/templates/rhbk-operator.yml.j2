@@ -1,5 +1,5 @@
 # Operator Group for RH-SSO
-- apiVersion: v1
+- apiVersion: operators.coreos.com/v1
   kind: OperatorGroup
   metadata:
     name: {{ rhbk_project_name }}-operatorgroup
@@ -9,7 +9,7 @@
     - {{ rhbk_project_name }}
 
 # Operator Subscription
-- apiVersion: v1alpha1
+- apiVersion: operators.coreos.com/v1alpha1
   kind: Subscription
   metadata:
     name: rhbk-operator

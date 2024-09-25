@@ -2,7 +2,7 @@
 - apiVersion: operators.coreos.com/v1
   kind: OperatorGroup
   metadata:
-    name: open-cluster-management-canes
+    name: open-cluster-management-group
     namespace: {{ acm_project_name }}
   spec:
     targetNamespaces:
@@ -18,6 +18,6 @@
   spec:
     sourceNamespace: openshift-marketplace
     source: redhat-operators
-    channel: release-2.10
+    channel: release-{{ acm_operator_version }}
     installPlanApproval: Automatic
     name: advanced-cluster-management
