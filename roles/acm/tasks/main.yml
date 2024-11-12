@@ -1,5 +1,5 @@
 ---
 # Install and setup Red Hat Advanced Cluster Management
 
-- include: acm-operator.yml
-- include: acm-mch.yml
+- import_tasks: acm-operator.yml
+- import_tasks: acm-mch.yml

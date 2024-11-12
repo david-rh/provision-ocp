@@ -1,10 +1,10 @@
 ---
 # Install and setup Red Hat build of KeyCloak
 
-- include: rhbk-operator.yml
-- include: rhbk-pgsql.yml
-- include: rhbk-tls.yml
-- include: rhbk.yml
-- include: rhbk-ocp-idp.yml
-- include: rhbk-cluster-admin.yml
+- import_tasks: rhbk-operator.yml
+- import_tasks: rhbk-pgsql.yml
+- import_tasks: rhbk-tls.yml
+- import_tasks: rhbk.yml
+- import_tasks: rhbk-ocp-idp.yml
+- import_tasks: rhbk-cluster-admin.yml
 
