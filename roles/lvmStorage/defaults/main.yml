@@ -1,0 +1,5 @@
+---
+change_default_storage_class: true
+lvm_default_storage_class: lvms-vg1
+
+change_image_registry_storage: true

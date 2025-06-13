@@ -1,0 +1,21 @@
+---
+- hosts: localhost
+  pre_tasks:
+    - name: Look for default defined common variables
+      include_vars: ../vars/common.yml
+      when: common_included is not defined or not common_included
+
+    - fail:
+        msg: Unable to continue without common variables set
+      when: common_included is not defined or not common_included
+
+  tasks:
+    - include_role:
+        name: lvmStorage
+    - include_role:
+        name: rhbk
+#    - include_role:
+#        name: acm
+#      when: includeACM
+
+      

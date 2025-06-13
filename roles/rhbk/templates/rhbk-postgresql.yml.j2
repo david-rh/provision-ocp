@@ -109,7 +109,7 @@
               - name: rhbk-pgsql-claim
                 mountPath: /var/lib/pgsql/data
             terminationMessagePolicy: File
-            image: 'rhel9/postgresql-16:latest'
+            image: 'registry.redhat.io/rhel9/postgresql-16'
         restartPolicy: Always
         terminationGracePeriodSeconds: 30
         dnsPolicy: ClusterFirst

@@ -1,0 +1,40 @@
+---
+- name: Create a PVC for the Registry
+  k8s:
+    kubeconfig: '{{ kubeconfig }}'
+    definition:
+      apiVersion: v1
+      kind: PersistentVolumeClaim
+      metadata:
+        name: image-registry-storage
+        namespace: openshift-image-registry
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 100Gi
+
+- name: Retrieve the current Image Registry Config resource
+  k8s_info:
+    kubeconfig: '{{ kubeconfig }}'
+    api_version: imageregistry.operator.openshift.io/v1
+    kind: Config
+    name: cluster
+  register: imageregistry_config
+
+- name: Patch the Image Registry Config resource with the new storage PVC
+  k8s:
+    kubeconfig: '{{ kubeconfig }}'
+    definition:
+      apiVersion: imageregistry.operator.openshift.io/v1
+      kind: Config
+      metadata:
+        name: cluster
+      spec:
+        managementState: 'Managed'
+        rolloutStrategy: Recreate
+        storage:
+          pvc:
+            claim:
+
