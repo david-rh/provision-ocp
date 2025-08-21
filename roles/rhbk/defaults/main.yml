@@ -13,7 +13,7 @@ pgsql_service_name: pgsql-kc-db
 pgsql_database: keycloak
 pgsql_password: "{{ generated_password }}"
 pgsql_user: rhbk
-pgsql_volume_size: 20Mi
+pgsql_volume_size: 5GiB
 rhbk_users: "{{ openshift_users }}"
 
 
